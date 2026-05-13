@@ -69,24 +69,10 @@
       line-height: 1.65;
     }
 
-    .context-section {
-      margin-bottom: 2rem;
-    }
-
-    .context-section legend,
-    .section-label {
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      color: #475f6a;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-      display: block;
-    }
-
     fieldset {
       border: none;
       padding: 0;
+      margin-bottom: 2rem;
     }
 
     fieldset legend {
@@ -362,41 +348,38 @@
       <p>Select a context and work through the questions. Record your observations in each field.</p>
     </div>
 
-    <div class="context-section">
-      <fieldset>
-        <legend>Learning environment</legend>
-        <div class="context-grid" role="group">
-          <button class="ctx-btn" onclick="selectContext('classroom')" id="ctx-classroom" aria-pressed="false">
-            <span class="ctx-name">Physical classroom</span>
-            <span class="ctx-sub">Lecture, seminar, tutorial</span>
-          </button>
-          <button class="ctx-btn" onclick="selectContext('online')" id="ctx-online" aria-pressed="false">
-            <span class="ctx-name">Online or asynchronous</span>
-            <span class="ctx-sub">LMS, recorded, digital delivery</span>
-          </button>
-          <button class="ctx-btn" onclick="selectContext('hybrid')" id="ctx-hybrid" aria-pressed="false">
-            <span class="ctx-name">Hybrid or blended</span>
-            <span class="ctx-sub">Mixed in-person and online</span>
-          </button>
-          <button class="ctx-btn" onclick="selectContext('field')" id="ctx-field" aria-pressed="false">
-            <span class="ctx-name">Field or experiential</span>
-            <span class="ctx-sub">Placement, practicum, community-based</span>
-          </button>
-          <button class="ctx-btn" onclick="selectContext('lab')" id="ctx-lab" aria-pressed="false">
-            <span class="ctx-name">Laboratory or studio</span>
-            <span class="ctx-sub">Practical, hands-on, making</span>
-          </button>
-        </div>
-      </fieldset>
-    </div>
+    <fieldset>
+      <legend>Learning environment</legend>
+      <div class="context-grid">
+        <button class="ctx-btn" onclick="selectContext('classroom')" id="ctx-classroom" aria-pressed="false">
+          <span class="ctx-name">Physical classroom</span>
+          <span class="ctx-sub">Lecture, seminar, tutorial</span>
+        </button>
+        <button class="ctx-btn" onclick="selectContext('online')" id="ctx-online" aria-pressed="false">
+          <span class="ctx-name">Online or asynchronous</span>
+          <span class="ctx-sub">LMS, recorded, digital delivery</span>
+        </button>
+        <button class="ctx-btn" onclick="selectContext('hybrid')" id="ctx-hybrid" aria-pressed="false">
+          <span class="ctx-name">Hybrid or blended</span>
+          <span class="ctx-sub">Mixed in-person and online</span>
+        </button>
+        <button class="ctx-btn" onclick="selectContext('field')" id="ctx-field" aria-pressed="false">
+          <span class="ctx-name">Field or experiential</span>
+          <span class="ctx-sub">Placement, practicum, community-based</span>
+        </button>
+        <button class="ctx-btn" onclick="selectContext('lab')" id="ctx-lab" aria-pressed="false">
+          <span class="ctx-name">Laboratory or studio</span>
+          <span class="ctx-sub">Practical, hands-on, making</span>
+        </button>
+      </div>
+    </fieldset>
 
-    <div class="questions-wrap" id="questions-wrap" aria-live="polite">
+    <div class="questions-wrap" id="questions-wrap">
       <div id="questions-container"></div>
       <div class="btn-row">
-        <button class="primary-btn" onclick="generateSummary()" id="summary-btn">View scan summary</button>
+        <button class="primary-btn" onclick="generateSummary()">View scan summary</button>
         <button class="ghost-btn" onclick="resetScan()">Start over</button>
       </div>
-      <p class="status-msg" id="status-msg" aria-live="polite" aria-atomic="true"></p>
     </div>
 
     <div class="summary-section" id="summary-section" tabindex="-1">
@@ -406,7 +389,7 @@
       </div>
       <div id="summary-cards"></div>
       <div class="btn-row" style="margin-top: 1.5rem;">
-        <button class="primary-btn" onclick="copySummary()" id="copy-btn">Copy summary</button>
+        <button class="primary-btn" onclick="copySummary()">Copy summary</button>
         <button class="ghost-btn" onclick="resetScan()">Start a new scan</button>
       </div>
       <p class="status-msg" id="copy-status" aria-live="polite" aria-atomic="true"></p>
@@ -471,17 +454,16 @@
     function selectContext(ctx) {
       currentContext = ctx;
 
-      document.querySelectorAll('.ctx-btn').forEach(b => {
-        b.setAttribute('aria-pressed', 'false');
-      });
-      const activeBtn = document.getElementById('ctx-' + ctx);
-      activeBtn.setAttribute('aria-pressed', 'true');
+      document.querySelectorAll('.ctx-btn').forEach(b => b.setAttribute('aria-pressed', 'false'));
+      document.getElementById('ctx-' + ctx).setAttribute('aria-pressed', 'true');
 
       const container = document.getElementById('questions-container');
       container.innerHTML = '';
 
-      const heading = document.createElement('p');
+      const heading = document.createElement('h2');
       heading.className = 'questions-heading';
+      heading.id = 'questions-heading';
+      heading.tabIndex = -1;
       heading.textContent = CONTEXT_NAMES[ctx];
       container.appendChild(heading);
 
@@ -521,17 +503,12 @@
         container.appendChild(block);
       });
 
-      const wrap = document.getElementById('questions-wrap');
-      wrap.classList.add('visible');
+      document.getElementById('questions-wrap').classList.add('visible');
       document.getElementById('summary-section').classList.remove('visible');
-      document.getElementById('status-msg').textContent = '';
-
-      wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
       setTimeout(() => {
-        const firstTextarea = document.getElementById('ans-0');
-        if (firstTextarea) firstTextarea.focus();
-      }, 300);
+        document.getElementById('questions-heading').focus();
+      }, 100);
     }
 
     function generateSummary() {
@@ -561,11 +538,10 @@
 
       const summarySection = document.getElementById('summary-section');
       summarySection.classList.add('visible');
-      summarySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
       setTimeout(() => {
         summarySection.focus();
-      }, 300);
+      }, 100);
     }
 
     function copySummary() {
@@ -592,12 +568,11 @@
       document.getElementById('questions-wrap').classList.remove('visible');
       document.getElementById('summary-section').classList.remove('visible');
       document.getElementById('questions-container').innerHTML = '';
-      document.getElementById('status-msg').textContent = '';
       document.getElementById('copy-status').textContent = '';
       window.scrollTo({ top: 0, behavior: 'smooth' });
       setTimeout(() => {
         document.getElementById('ctx-classroom').focus();
-      }, 300);
+      }, 100);
     }
   </script>
 
