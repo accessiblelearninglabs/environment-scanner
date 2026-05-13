@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Environment Scanner — Accessible Learning Labs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Asap:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Asap', sans-serif;
+      color: #303e44;
+      background: #ffffff;
+      padding: 2rem 1.5rem 4rem;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+    }
+
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 1rem;
+      background: #303e44;
+      color: #ffffff;
+      font-family: 'Asap', sans-serif;
+      font-size: 14px;
+      padding: 10px 18px;
+      border-radius: 0 0 8px 8px;
+      text-decoration: none;
+      z-index: 100;
+      transition: top 0.15s;
+    }
+
+    .skip-link:focus {
+      top: 0;
+    }
+
+    .intro {
+      margin-bottom: 1.75rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid #303e4418;
+    }
+
+    .intro h1 {
+      font-size: 22px;
+      font-weight: 500;
+      color: #303e44;
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+
+    .intro p {
+      font-size: 14px;
+      color: #475f6a;
+      line-height: 1.65;
+    }
+
+    .context-section {
+      margin-bottom: 2rem;
+    }
+
+    .context-section legend,
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: #475f6a;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    fieldset {
+      border: none;
+      padding: 0;
+    }
+
+    fieldset legend {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: #475f6a;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      float: left;
+      width: 100%;
+    }
+
+    .context-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 8px;
+      clear: both;
+    }
+
+    .ctx-btn {
+      font-family: 'Asap', sans-serif;
+      font-size: 13px;
+      padding: 11px 13px;
+      border: 1px solid #303e4428;
+      border-radius: 8px;
+      background: #ffffff;
+      color: #303e44;
+      cursor: pointer;
+      text-align: left;
+      line-height: 1.4;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+      width: 100%;
+    }
+
+    .ctx-btn:hover {
+      border-color: #475f6a;
+    }
+
+    .ctx-btn:focus-visible {
+      outline: 3px solid #475f6a;
+      outline-offset: 2px;
+    }
+
+    .ctx-btn[aria-pressed="true"] {
+      border-color: #303e44;
+      background: #303e44;
+      color: #ffffff;
+    }
+
+    .ctx-btn .ctx-name {
+      font-weight: 500;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .ctx-btn .ctx-sub {
+      font-size: 11px;
+      opacity: 0.65;
+    }
+
+    .questions-wrap {
+      display: none;
+    }
+
+    .questions-wrap.visible {
+      display: block;
+    }
+
+    .questions-heading {
+      font-size: 15px;
+      font-weight: 500;
+      color: #303e44;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #303e4412;
+    }
+
+    .q-block {
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid #303e4412;
+    }
+
+    .q-block:last-of-type {
+      border-bottom: none;
+    }
+
+    .q-num {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: #475f6a;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .q-label {
+      font-size: 15px;
+      font-weight: 500;
+      color: #303e44;
+      line-height: 1.5;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .q-hint {
+      font-size: 13px;
+      color: #475f6a;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    textarea {
+      font-family: 'Asap', sans-serif;
+      font-size: 14px;
+      color: #303e44;
+      width: 100%;
+      border: 1px solid #303e4428;
+      border-radius: 8px;
+      padding: 10px 12px;
+      resize: vertical;
+      min-height: 88px;
+      line-height: 1.6;
+      background: #ffffff;
+      transition: border-color 0.15s;
+    }
+
+    textarea:focus {
+      outline: 3px solid #475f6a;
+      outline-offset: 2px;
+      border-color: #475f6a;
+    }
+
+    textarea::placeholder {
+      color: #303e4440;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 1.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .primary-btn {
+      font-family: 'Asap', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 10px 22px;
+      background: #303e44;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .primary-btn:hover {
+      background: #475f6a;
+    }
+
+    .primary-btn:focus-visible {
+      outline: 3px solid #475f6a;
+      outline-offset: 3px;
+    }
+
+    .primary-btn:active {
+      transform: scale(0.98);
+    }
+
+    .ghost-btn {
+      font-family: 'Asap', sans-serif;
+      font-size: 13px;
+      padding: 10px 16px;
+      background: transparent;
+      color: #475f6a;
+      border: 1px solid #303e4428;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .ghost-btn:hover {
+      border-color: #475f6a;
+      color: #303e44;
+    }
+
+    .ghost-btn:focus-visible {
+      outline: 3px solid #475f6a;
+      outline-offset: 3px;
+    }
+
+    .summary-section {
+      display: none;
+      margin-top: 2.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid #303e4418;
+    }
+
+    .summary-section.visible {
+      display: block;
+    }
+
+    .summary-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .summary-header h2 {
+      font-size: 17px;
+      font-weight: 500;
+      color: #303e44;
+      margin-bottom: 4px;
+    }
+
+    .summary-header p {
+      font-size: 13px;
+      color: #475f6a;
+      line-height: 1.6;
+    }
+
+    .summary-item {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid #303e4412;
+    }
+
+    .summary-item:last-of-type {
+      border-bottom: none;
+    }
+
+    .summary-q {
+      font-size: 13px;
+      font-weight: 500;
+      color: #303e44;
+      margin-bottom: 5px;
+    }
+
+    .summary-a {
+      font-size: 13px;
+      color: #475f6a;
+      line-height: 1.65;
+      white-space: pre-wrap;
+    }
+
+    .summary-a.empty {
+      color: #303e4438;
+      font-style: italic;
+    }
+
+    .status-msg {
+      font-size: 13px;
+      color: #475f6a;
+      margin-top: 0.75rem;
+      min-height: 1.4em;
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 1.5rem 1rem 3rem; }
+      .context-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <main id="main-content">
+
+    <div class="intro">
+      <h1>Environment Scanner</h1>
+      <p>Select a context and work through the questions. Record your observations in each field.</p>
+    </div>
+
+    <div class="context-section">
+      <fieldset>
+        <legend>Learning environment</legend>
+        <div class="context-grid" role="group">
+          <button class="ctx-btn" onclick="selectContext('classroom')" id="ctx-classroom" aria-pressed="false">
+            <span class="ctx-name">Physical classroom</span>
+            <span class="ctx-sub">Lecture, seminar, tutorial</span>
+          </button>
+          <button class="ctx-btn" onclick="selectContext('online')" id="ctx-online" aria-pressed="false">
+            <span class="ctx-name">Online or asynchronous</span>
+            <span class="ctx-sub">LMS, recorded, digital delivery</span>
+          </button>
+          <button class="ctx-btn" onclick="selectContext('hybrid')" id="ctx-hybrid" aria-pressed="false">
+            <span class="ctx-name">Hybrid or blended</span>
+            <span class="ctx-sub">Mixed in-person and online</span>
+          </button>
+          <button class="ctx-btn" onclick="selectContext('field')" id="ctx-field" aria-pressed="false">
+            <span class="ctx-name">Field or experiential</span>
+            <span class="ctx-sub">Placement, practicum, community-based</span>
+          </button>
+          <button class="ctx-btn" onclick="selectContext('lab')" id="ctx-lab" aria-pressed="false">
+            <span class="ctx-name">Laboratory or studio</span>
+            <span class="ctx-sub">Practical, hands-on, making</span>
+          </button>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="questions-wrap" id="questions-wrap" aria-live="polite">
+      <div id="questions-container"></div>
+      <div class="btn-row">
+        <button class="primary-btn" onclick="generateSummary()" id="summary-btn">View scan summary</button>
+        <button class="ghost-btn" onclick="resetScan()">Start over</button>
+      </div>
+      <p class="status-msg" id="status-msg" aria-live="polite" aria-atomic="true"></p>
+    </div>
+
+    <div class="summary-section" id="summary-section" tabindex="-1">
+      <div class="summary-header">
+        <h2>Scan summary</h2>
+        <p>A record of your observations for this environment.</p>
+      </div>
+      <div id="summary-cards"></div>
+      <div class="btn-row" style="margin-top: 1.5rem;">
+        <button class="primary-btn" onclick="copySummary()" id="copy-btn">Copy summary</button>
+        <button class="ghost-btn" onclick="resetScan()">Start a new scan</button>
+      </div>
+      <p class="status-msg" id="copy-status" aria-live="polite" aria-atomic="true"></p>
+    </div>
+
+  </main>
+
+  <script>
+    const DATA = {
+      classroom: [
+        { q: 'At what point in this learning experience is a student first required to share information about themselves in order to participate?', hint: 'Consider arrival, seating arrangements, participation formats, and assessment. Note where that requirement occurs and what it involves.' },
+        { q: 'What assumptions about sustained attention are built into the structure of this session?', hint: 'Consider session length, break frequency, and pacing. Note where those assumptions are made explicit and where they are implicit.' },
+        { q: 'Which elements of this learning environment depend on a student\'s ability to participate verbally?', hint: 'Consider questioning, discussion, group work, and formative participation. Note which of these are central to the learning outcomes.' },
+        { q: 'What prior knowledge of institutional processes would a student need in order to navigate this environment independently?', hint: 'Consider how accommodations are requested, how participation norms are communicated, and where information about support is located.' },
+        { q: 'Which areas of this physical space offer the most complete access to instruction — and how are students allocated to those areas?', hint: 'Consider sightlines, acoustics, proximity to exits, and flexibility of seating arrangements.' },
+        { q: 'What options are available to a student who needs to manage a physical, sensory, or emotional need during a session?', hint: 'Consider what is currently available, how it is communicated, and whether using it requires a student to draw attention to themselves.' }
+      ],
+      online: [
+        { q: 'What assumptions about a student\'s learning environment are built into the design of this course?', hint: 'Consider internet connectivity, device access, available study space, noise levels, and personal or caring responsibilities.' },
+        { q: 'At which points does this course require a student to be seen or heard — and how does each requirement relate to the stated learning outcomes?', hint: 'Consider camera expectations, live participation requirements, and audio or video-based assessments.' },
+        { q: 'How many steps does it take a student to locate what they need to do next in this course?', hint: 'Trace the navigation path from a student\'s starting point. Note where interpretation is required and where the path is straightforward.' },
+        { q: 'Which content formats are used in this course, and what does each format require of a student in order to access it?', hint: 'Consider captions, transcripts, document structure, and any format that has dependencies on software, bandwidth, or prior familiarity.' },
+        { q: 'What is the process for a student who encounters difficulty — technical, academic, or personal — and how many steps does that process involve?', hint: 'Consider whether support is synchronous or asynchronous, how it is located, and what a student is required to do or disclose to access it.' },
+        { q: 'Which time-based requirements in this course are tied directly to learning outcomes, and which have been inherited from other delivery formats?', hint: 'Consider deadlines, synchronous session schedules, and participation windows.' }
+      ],
+      hybrid: [
+        { q: 'In what ways does the experience of participating online in this environment differ from participating in person?', hint: 'Consider what is visible, audible, and interactive for each group. Note where the experiences diverge and where they are equivalent.' },
+        { q: 'What factors might lead a student to choose online participation rather than attending in person?', hint: 'Consider disability, geographic location, caring responsibilities, transport, and health. Note how the design accounts for the range of reasons a student may be remote.' },
+        { q: 'Which elements of this learning environment are not fully accessible to students participating online?', hint: 'Consider informal interaction, visual materials, group activities, and spontaneous moments. Note which of these carry learning value.' },
+        { q: 'What is the plan when technology does not perform as expected — and what is a student\'s role in that situation?', hint: 'Consider audio and video failures, platform outages, and connectivity issues. Note what a student is expected to manage independently.' },
+        { q: 'How is the facilitator\'s attention distributed between in-person and online participants in this environment?', hint: 'Consider how questions are taken, how participation is invited, and how the facilitator monitors engagement across both groups.' },
+        { q: 'How is online participation described and framed — in course documentation, in session language, and in the design of activities?', hint: 'Note whether online participation is positioned as a primary mode or as an alternative to in-person attendance.' }
+      ],
+      field: [
+        { q: 'At what stage of this placement is a student expected to disclose a disability or access requirement — and through what process?', hint: 'Consider disclosure to the institution, the host site, and individual supervisors. Note what each disclosure involves and who holds that information.' },
+        { q: 'What physical, sensory, and cognitive demands does participation in this placement involve?', hint: 'List the demands as specifically as possible. Note which are directly tied to the learning outcomes and which are features of the placement context.' },
+        { q: 'What is the process when a student is unable to meet a placement requirement — and how is that process documented and communicated?', hint: 'Consider who is involved, what the timeline is, and how the student\'s role in the process is defined.' },
+        { q: 'To what extent does a student\'s experience in this placement depend on the practices of an individual supervisor or host organisation?', hint: 'Consider what is standardised across placements and what varies. Note where variability affects access.' },
+        { q: 'What practical requirements does this placement make of students outside of learning hours?', hint: 'Consider travel time and cost, equipment requirements, language, and any cultural or contextual factors specific to the placement setting.' },
+        { q: 'What support is available to a student experiencing difficulty in this placement, and at what point does it become accessible?', hint: 'Consider whether support is initiated by the student or offered proactively, and what is required to access it.' }
+      ],
+      lab: [
+        { q: 'What physical requirements does full participation in this space involve?', hint: 'Consider posture, duration of standing or sitting, fine motor tasks, physical reach, and the use of specific equipment. Note which requirements are central to the learning outcomes.' },
+        { q: 'Where does this environment place time pressure on students — and how does each instance relate to the learning outcomes?', hint: 'Consider timed tasks, demonstration under observation, and the pace of group work.' },
+        { q: 'How is student work evaluated in this space, and what does the evaluation process require of students in terms of visibility or comparison?', hint: 'Consider public critique, peer observation, and any formats where individual work is assessed in a group setting.' },
+        { q: 'What knowledge is a student expected to have before instruction begins in this environment?', hint: 'Consider safety protocols, equipment conventions, and spatial or procedural norms. Note how and when that knowledge is communicated.' },
+        { q: 'What sensory conditions does this environment create, and have those been considered as access factors?', hint: 'Consider noise, smell, lighting, temperature, and the density of people and equipment in the space.' },
+        { q: 'How was the workflow of this practical session designed — and what working pace and style does it assume?', hint: 'Consider step sequencing, time allocations, equipment sharing arrangements, and group configurations.' }
+      ]
+    };
+
+    const CONTEXT_NAMES = {
+      classroom: 'Physical classroom',
+      online: 'Online or asynchronous',
+      hybrid: 'Hybrid or blended',
+      field: 'Field or experiential',
+      lab: 'Laboratory or studio'
+    };
+
+    let currentContext = null;
+
+    function selectContext(ctx) {
+      currentContext = ctx;
+
+      document.querySelectorAll('.ctx-btn').forEach(b => {
+        b.setAttribute('aria-pressed', 'false');
+      });
+      const activeBtn = document.getElementById('ctx-' + ctx);
+      activeBtn.setAttribute('aria-pressed', 'true');
+
+      const container = document.getElementById('questions-container');
+      container.innerHTML = '';
+
+      const heading = document.createElement('p');
+      heading.className = 'questions-heading';
+      heading.textContent = CONTEXT_NAMES[ctx];
+      container.appendChild(heading);
+
+      DATA[ctx].forEach((item, i) => {
+        const block = document.createElement('div');
+        block.className = 'q-block';
+
+        const num = document.createElement('p');
+        num.className = 'q-num';
+        num.setAttribute('aria-hidden', 'true');
+        num.textContent = 'Question ' + String(i + 1).padStart(2, '0');
+
+        const labelId = 'q-label-' + i;
+        const hintId = 'q-hint-' + i;
+
+        const labelEl = document.createElement('label');
+        labelEl.className = 'q-label';
+        labelEl.setAttribute('for', 'ans-' + i);
+        labelEl.id = labelId;
+        labelEl.textContent = item.q;
+
+        const hint = document.createElement('p');
+        hint.className = 'q-hint';
+        hint.id = hintId;
+        hint.textContent = item.hint;
+
+        const ta = document.createElement('textarea');
+        ta.id = 'ans-' + i;
+        ta.placeholder = 'Observations\u2026';
+        ta.setAttribute('aria-labelledby', labelId);
+        ta.setAttribute('aria-describedby', hintId);
+
+        block.appendChild(num);
+        block.appendChild(labelEl);
+        block.appendChild(hint);
+        block.appendChild(ta);
+        container.appendChild(block);
+      });
+
+      const wrap = document.getElementById('questions-wrap');
+      wrap.classList.add('visible');
+      document.getElementById('summary-section').classList.remove('visible');
+      document.getElementById('status-msg').textContent = '';
+
+      wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      setTimeout(() => {
+        const firstTextarea = document.getElementById('ans-0');
+        if (firstTextarea) firstTextarea.focus();
+      }, 300);
+    }
+
+    function generateSummary() {
+      if (!currentContext) return;
+
+      const questions = DATA[currentContext];
+      const cards = document.getElementById('summary-cards');
+      cards.innerHTML = '';
+
+      questions.forEach((item, i) => {
+        const ans = (document.getElementById('ans-' + i)?.value || '').trim();
+        const div = document.createElement('div');
+        div.className = 'summary-item';
+
+        const q = document.createElement('p');
+        q.className = 'summary-q';
+        q.textContent = item.q;
+
+        const a = document.createElement('p');
+        a.className = 'summary-a' + (ans ? '' : ' empty');
+        a.textContent = ans || 'No response recorded.';
+
+        div.appendChild(q);
+        div.appendChild(a);
+        cards.appendChild(div);
+      });
+
+      const summarySection = document.getElementById('summary-section');
+      summarySection.classList.add('visible');
+      summarySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      setTimeout(() => {
+        summarySection.focus();
+      }, 300);
+    }
+
+    function copySummary() {
+      if (!currentContext) return;
+      const questions = DATA[currentContext];
+      let text = 'Environment Scanner — Scan Summary\n';
+      text += CONTEXT_NAMES[currentContext] + '\n\n';
+      questions.forEach((item, i) => {
+        const ans = (document.getElementById('ans-' + i)?.value || '').trim();
+        text += item.q + '\n' + (ans || '(No response recorded.)') + '\n\n';
+      });
+      navigator.clipboard.writeText(text.trim()).then(() => {
+        const status = document.getElementById('copy-status');
+        status.textContent = 'Summary copied to clipboard.';
+        setTimeout(() => { status.textContent = ''; }, 3000);
+      }).catch(() => {
+        document.getElementById('copy-status').textContent = 'Copy failed. Please select and copy the text manually.';
+      });
+    }
+
+    function resetScan() {
+      currentContext = null;
+      document.querySelectorAll('.ctx-btn').forEach(b => b.setAttribute('aria-pressed', 'false'));
+      document.getElementById('questions-wrap').classList.remove('visible');
+      document.getElementById('summary-section').classList.remove('visible');
+      document.getElementById('questions-container').innerHTML = '';
+      document.getElementById('status-msg').textContent = '';
+      document.getElementById('copy-status').textContent = '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => {
+        document.getElementById('ctx-classroom').focus();
+      }, 300);
+    }
+  </script>
+
+</body>
+</html>
